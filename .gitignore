@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.streamlit/
+simulated_fe_data.csv
+# We include .pkl files so the app works immediately on Streamlit
+#!surrogate_model.pkl
+#!scaler.pkl
