@@ -7,22 +7,59 @@ import plotly.graph_objects as go
 
 # --- PAGE CONFIG ---
 st.set_page_config(
-    page_title="Hygrothermal Digital Twin: Seed Mechanics",
-    page_icon="🔬",
+    page_title="Hygrothermal Digital Twin | Agriculture 4.0",
+    page_icon="🌱",
     layout="wide"
 )
 
-# --- CUSTOM CSS FOR PREMIUM LOOK ---
+# --- CUSTOM CSS FOR PREMIUM EYE-CATCHING LOOK ---
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
+    /* Main background */
+    .stApp {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        color: white;
     }
-    .stMetric {
-        background-color: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    
+    /* Center metric cards */
+    [data-testid="stMetricValue"] {
+        font-size: 40px;
+        color: #00ff87;
+        font-weight: 700;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: #b2bec3;
+        font-size: 18px;
+    }
+
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(15, 32, 39, 0.8);
+        border-right: 1px solid #34495e;
+    }
+    
+    /* Header styling */
+    h1, h2, h3 {
+        color: #00ff87 !important;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Cards for metrics */
+    div[data-testid="stMetric"] {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid rgba(0, 255, 135, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        backdrop-filter: blur(4px);
+    }
+    
+    /* Information boxes */
+    .stAlert {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid rgba(0, 255, 135, 0.3) !important;
+        color: #ecf0f1 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -107,24 +144,34 @@ with col1:
         st.success("✅ **Stable Configuration**: Material characteristics are within the safe hygrothermal range.")
 
 with col2:
-    # Scientific Gauge
+    # Premium Glowing Gauge
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = stability_pred * 100,
+        number = {'suffix': "%", 'font': {'color': '#00ff87', 'size': 50}},
         domain = {'x': [0, 1], 'y': [0, 1]},
         gauge = {
-            'axis': {'range': [0, 100], 'tickwidth': 1},
-            'bar': {'color': "darkgreen" if stability_pred > 0.7 else "orange" if stability_pred > 0.4 else "darkred"},
+            'axis': {'range': [0, 100], 'tickwidth': 2, 'tickcolor': "#00ff87"},
+            'bar': {'color': "#00ff87" if stability_pred > 0.7 else "#f1c40f" if stability_pred > 0.4 else "#ff4b2b"},
+            'bgcolor': "rgba(0,0,0,0)",
+            'borderwidth': 2,
+            'bordercolor': "#34495e",
             'steps': [
-                {'range': [0, 40], 'color': '#ff9999'},
-                {'range': [40, 70], 'color': '#ffffcc'},
-                {'range': [70, 100], 'color': '#ccffcc'}],
+                {'range': [0, 40], 'color': 'rgba(255, 75, 43, 0.3)'},
+                {'range': [40, 70], 'color': 'rgba(241, 196, 15, 0.3)'},
+                {'range': [70, 100], 'color': 'rgba(0, 255, 135, 0.3)'}],
             'threshold': {
-                'line': {'color': "red", 'width': 4},
+                'line': {'color': "#ff4b2b", 'width': 4},
                 'thickness': 0.75,
-                'value': 90}}))
+                'value': 95}}))
     
-    fig.update_layout(height=350, margin=dict(l=20, r=20, t=50, b=20))
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font={'color': "#00ff87", 'family': "Arial"},
+        height=400,
+        margin=dict(l=30, r=30, t=50, b=20)
+    )
     st.plotly_chart(fig, use_container_width=True)
 
 # --- SCIENTIFIC FOOTER ---
