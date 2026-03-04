@@ -174,6 +174,121 @@ with col2:
     )
     st.plotly_chart(fig, use_container_width=True)
 
+# --- RESEARCH-GRADE UPGRADES ---
+st.divider()
+st.subheader("🔬 Advanced Research Analytics")
+
+tab1, tab2, tab3 = st.tabs(["📊 Sensitivity Analysis", "🌐 3D Failure Surface", "📥 Research Export"])
+
+with tab1:
+    st.write("**Local Sensitivity Analysis**: Identifies which environmental factor is currently driving material degradation.")
+    
+    # Calculate finite difference sensitivities
+    perturbation = 0.1
+    sens = []
+    features = ["Rel. Humidity", "Temperature", "Mech. Load"]
+    
+    for i in range(3):
+        p_plus = input_feats.copy()
+        p_plus[0, i] += perturbation
+        pred_plus = model.predict(scaler.transform(p_plus))[0]
+        
+        p_minus = input_feats.copy()
+        p_minus[0, i] -= perturbation
+        pred_minus = model.predict(scaler.transform(p_minus))[0]
+        
+        # d(Stability)/dx
+        grad = (pred_plus - pred_minus) / (2 * perturbation)
+        sens.append(grad)
+
+    sens_df = pd.DataFrame({
+        "Variable": features,
+        "Sensitivity (Gradient)": sens
+    })
+    
+    # Color coding based on direction
+    sens_df["Impact"] = ["Negative (Degrades)" if s < 0 else "Positive (Stabilizes)" for s in sens]
+    
+    fig_sens = go.Figure(go.Bar(
+        x=sens_df["Variable"],
+        y=sens_df["Sensitivity (Gradient)"],
+        marker_color=['#ff4b2b' if s < 0 else '#00ff87' for s in sens],
+        text=sens_df["Impact"],
+        textposition='auto',
+    ))
+    
+    fig_sens.update_layout(
+        title="Predictive Gradient: Impact of Variable Perturbation",
+        xaxis_title="Input Parameter",
+        yaxis_title="d(Stability) / d(Input)",
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font={'color': "#00ff87"}
+    )
+    st.plotly_chart(fig_sens, use_container_width=True)
+    st.info("💡 **Interpretation**: A high negative gradient for Humidity indicates that a small increase in moisture will cause a disproportionately large drop in structural safety.")
+
+with tab2:
+    st.write("**Multi-Dimensional Stability Surface**: Visualizing the coupling effects between Humidity and Loading.")
+    
+    # Generate meshgrid for 3D plot
+    rh_range = np.linspace(30, 95, 25)
+    load_range = np.linspace(50, 500, 25)
+    RH_mesh, LOAD_mesh = np.meshgrid(rh_range, load_range)
+    
+    # Prepare inputs for prediction (Temp fixed at current value)
+    mesh_feats = np.column_stack([
+        RH_mesh.ravel(), 
+        np.full(RH_mesh.size, temp), 
+        LOAD_mesh.ravel()
+    ])
+    
+    Z = model.predict(scaler.transform(mesh_feats)).reshape(RH_mesh.shape)
+    
+    fig_3d = go.Figure(data=[go.Surface(
+        z=Z, x=RH_mesh, y=LOAD_mesh,
+        colorscale='Viridis',
+        contours = {
+            "z": {"show": True, "start": 0, "end": 1, "size": 0.1, "color":"white"}
+        }
+    )])
+    
+    fig_3d.update_layout(
+        title=f"3D Stability Surface (at T = {temp}°C)",
+        scene = dict(
+            xaxis_title='Rel. Humidity (%)',
+            yaxis_title='Mech. Load (kPa)',
+            zaxis_title='Stability',
+            xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
+            zaxis=dict(gridcolor="rgba(255,255,255,0.1)")),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font={'color': "#00ff87"},
+        height=600
+    )
+    st.plotly_chart(fig_3d, use_container_width=True)
+
+with tab3:
+    st.write("**Simulation Report**: Export current parameters for laboratory inclusion.")
+    
+    report_data = {
+        "Metric": ["Relative Humidity", "Ambient Temperature", "Mechanical Stress", "Stability Index", "Status", "Sim Timestamp"],
+        "Value": [f"{rh}%", f"{temp}°C", f"{load} kPa", f"{stability_pred:.4f}", status, time.strftime("%Y-%m-%d %H:%M:%S")]
+    }
+    rdf = pd.DataFrame(report_data)
+    
+    st.table(rdf)
+    
+    csv = rdf.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Download Research Summary (CSV)",
+        data=csv,
+        file_name=f"digital_twin_report_{int(time.time())}.csv",
+        mime='text/csv',
+    )
+
+
 # --- SCIENTIFIC FOOTER ---
 st.divider()
 st.subheader("Methodology: Shell-to-Beam Surrogate Mapping")

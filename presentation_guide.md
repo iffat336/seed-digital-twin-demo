@@ -13,6 +13,9 @@ This project demonstrates your ability to bridge **Plant Science** with **Advanc
 ### 3. The "Result" (Real-Time Digital Twin)
 "My model now acts as a **'Real-Time Digital Twin'**. When sensors detect changes in **Relative Humidity** or **Mechanical Loading**, the AI recognizes the pattern from your math instantly, allowing for a 1-millisecond response for **Smart Farming** monitoring."
 
+### 4. Advanced Research Analytics (The "Scientific Edge")
+"To make the model interpretable for engineering, I've implemented **Sensitivity Analysis**. This identifies the 'Gradient' of material failure—telling us exactly which environmental variable is most critical at any given moment. I've also included a **3D Stability Surface** to visualize the complex non-linear coupling between humidity and mechanical load."
+
 ## 🚀 Demonstration Steps (The "Showstopper")
 
 ### The Streamlit Dashboard
@@ -22,12 +25,15 @@ This project demonstrates your ability to bridge **Plant Science** with **Advanc
    - Share your screen and show the dashboard.
    - **Explain**: "I built this interactive dashboard to show the real-time capability of our Digital Twin."
    - **Move the sliders**: Show how high moisture and pressure instantly trigger the Red "Critical Risk" alert.
-   - **Highlight the "Inference Speed"**: Point out that it takes less than 1 millisecond. This is why AI is needed to make the Professors' math work for real-world farmers.
+   - **Switch Tabs**: 
+     - **📊 Sensitivity Analysis**: Show them the bar chart. Say: *"This helps us perform Inverse Analysis by identifying the most influential parameters."*
+     - **🌐 3D Failure Surface**: Rotate the 3D plot. Say: *"This visualizes the safe operating envelope of the material across the entire research spectrum."*
+     - **📥 Research Export**: Click the download button. Say: *"We can export every simulation as a standardized lab report for peer review documentation."*
 
 ### 📁 Project Files:
 - `data_simulator.py`: Generates the "Big Data" for training.
 - `surrogate_model.py`: Trains the AI (The "Brain").
-- `app.py`: The professional Dashboard.
+- `app.py`: The upgraded Research Dashboard.
 
 ---
 **Good luck, Iffat! This dashboard makes your interdisciplinary skills undeniable.**
